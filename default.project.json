@@ -1,0 +1,13 @@
+{
+  "name": "TrustNoOne",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Modules": { "$path": "src/shared/Modules" },
+      "Configs": { "$path": "src/shared/Configs" }
+    },
+
+    "ServerScriptService": { "$path": "src/server" }
+  }
+}

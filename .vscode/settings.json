@@ -1,0 +1,13 @@
+{
+    "luau-lsp.studioPlugin.enabled": true,
+    "luau-lsp.sourcemap.enabled": true,
+    "luau-lsp.sourcemap.autogenerate": true,
+    "luau-lsp.completion.autocompleteEnd": true,
+
+    "editor.formatOnSave": true,
+    "[luau]": {
+        "editor.defaultFormatter": "JohnnyMorganz.stylua"
+    },
+
+    "files.autoSave": "onFocusChange"
+}
