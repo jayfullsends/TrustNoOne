@@ -93,6 +93,7 @@ function CombatService:DropGun(victim: Player)
 		tool.Parent = player.Backpack
 		armed[player.UserId] = true
 		clone:Destroy()
+		droppedGun = nil
 	end
 
 	for _, part in clone:GetChildren() do
@@ -275,8 +276,8 @@ function CombatService:Start()
 		if RoleService:GetRole(hitPlayer) == "Murderer" then
 			StatsService:AddKill(player)
 			local humanoid = model:FindFirstChild("Humanoid") :: Humanoid
-			humanoid:TakeDamage(100)
 			GameService:PlayerKilled(hitPlayer)
+			humanoid:TakeDamage(100)
 		elseif RoleService:GetRole(hitPlayer) == "Innocent" then
 			local hitPlayerHum = model:FindFirstChild("Humanoid") :: Humanoid
 			GameService:PlayerKilled(hitPlayer)

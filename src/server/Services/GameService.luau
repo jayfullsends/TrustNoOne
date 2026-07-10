@@ -15,7 +15,7 @@ local MIN_PLAYERS = 3
 local INTERMISSION_TIME = 5
 
 --// Main
-local ROUND_DURATION = 180
+local ROUND_DURATION = 30
 local CURRENT_STATE
 local ROUND_WINNER
 
