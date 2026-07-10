@@ -44,8 +44,8 @@ function CurrentState:Start()
 			currentStateTitle.Text = formatTime(msg)
 		elseif msgType == "Round_Starting" then
 			currentStateTitle.Text = msg
-		elseif msgType == "Giving_Tools" then
-			currentStateTitle.Text = msg
+		else
+			return
 		end
 	end)
 end

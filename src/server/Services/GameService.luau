@@ -31,7 +31,6 @@ local StatsService
 local function setState(stateName)
 	CURRENT_STATE = stateName
 	remoteStorage.CurrentState:FireAllClients(CURRENT_STATE)
-	print("Remote Fired!")
 end
 
 local function didThisRoleWin(role, winner)
@@ -128,6 +127,8 @@ function GameService:Start()
 				task.wait(1)
 			end
 
+			--// Map Cloning Logic Here
+
 			setState(gameStates.Active)
 			self:TeleportPlayers()
 
@@ -140,8 +141,10 @@ function GameService:Start()
 				RoleService:SendRole(player)
 			end
 
+			task.wait(5)
+
 			for i = 10, 1, -1 do
-				remoteStorage.TimerEvent:FireAllClients("Giving_Tools", "Giving Tools In : " .. i .. " Seconds!")
+				remoteStorage.TimerEvent:FireAllClients("Round_Starting", "Giving Tools In : " .. i .. " Seconds!")
 				task.wait(1)
 			end
 
@@ -177,7 +180,9 @@ function GameService:Start()
 				remoteStorage.RoundEnded:FireClient(player, {
 					winner = ROUND_WINNER,
 					murderer = murderer,
+					murderer_kills = results[murderer].kills,
 					sheriff = sheriff,
+					sheriff_shots = results[sheriff].shots,
 					innocents = innocents,
 					earned = r.earned,
 					level = r.level,
@@ -188,13 +193,13 @@ function GameService:Start()
 
 			setState(gameStates.Ending)
 
-			task.wait(3)
+			task.wait(1)
 
 			for _, player in PLAYERS_PLAYING do
 				player:LoadCharacterAsync()
 			end
 
-			task.wait(5)
+			task.wait(3)
 			PLAYERS_PLAYING = {}
 			ROUND_PARTICIPANTS = {}
 			results = {}

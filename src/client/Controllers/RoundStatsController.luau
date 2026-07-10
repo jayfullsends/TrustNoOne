@@ -76,7 +76,15 @@ local function clearRoster()
 	end
 end
 
-local function populateMurderer(userId)
+local function pluralize(count, singular, plural)
+	if count == 1 then
+		return count .. " " .. singular
+	else
+		return count .. " " .. plural
+	end
+end
+
+local function populateMurderer(userId, kills)
 	local content
 	pcall(function()
 		content = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
@@ -90,10 +98,11 @@ local function populateMurderer(userId)
 	else
 		murdererDisplayName.Text = "Player Left.."
 	end
-	playersKilledAmount.Text = "2 Kills"
+
+	playersKilledAmount.Text = pluralize(kills, "Kill", "Kills")
 end
 
-local function populateSheriff(userId)
+local function populateSheriff(userId, shots)
 	local content
 	pcall(function()
 		content = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
@@ -108,7 +117,8 @@ local function populateSheriff(userId)
 	else
 		sheriffDisplayName.Text = "Player Left.."
 	end
-	shotsFiredAmount.Text = "0 Shots Fired"
+
+	shotsFiredAmount.Text = pluralize(shots, "Shot Fired", "Shots Fired")
 end
 
 local function buildRoster(innocents)
@@ -145,7 +155,7 @@ local function buildStats(data)
 	local playerInfo = data
 	playersCurrentLevel.Text = "Lvl : " .. playerInfo.level
 	playersNextLevel.Text = "Lvl : " .. (playerInfo.level + 1)
-	xpNeeded.Text = playerInfo.earned .. " / " .. playerInfo.xpNeeded
+	xpNeeded.Text = playerInfo.currentXP .. " / " .. playerInfo.xpNeeded
 	xpEarnedAmount.Text = "XP Earned : +" .. playerInfo.earned
 	local ratio = math.clamp(playerInfo.currentXP / playerInfo.xpNeeded, 0, 1)
 
@@ -165,8 +175,8 @@ end
 function RoundStatsController:Start()
 	remoteStorage.RoundEnded.OnClientEvent:Connect(function(data)
 		clearRoster()
-		populateMurderer(data.murderer)
-		populateSheriff(data.sheriff)
+		populateMurderer(data.murderer, data.murderer_kills)
+		populateSheriff(data.sheriff, data.sheriff_shots)
 		buildWinTitle(data.winner)
 		buildRoster(data.innocents)
 		buildStats(data)

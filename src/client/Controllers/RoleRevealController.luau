@@ -25,6 +25,8 @@ local soundsFolder = gui:WaitForChild("Sounds")
 local uiAppear = soundsFolder:WaitForChild("ui_appear") :: Sound
 local suspenseSound = soundsFolder:WaitForChild("suspense") :: Sound
 
+local roleSound = soundsFolder:WaitForChild("RoleSound")
+
 local RoleRevealController = {}
 
 function RoleRevealController:Init()
@@ -52,10 +54,12 @@ function RoleRevealController:Start()
 		DiamondOutsideBorder.Image = config.DiamondOutsideBorder
 		DiamondInsideBorder.Image = config.DiamondInsideBorder
 		WeaponImage.Image = config.Icon
+		roleSound.SoundId = config.Sound
 
 		--suspenseSound:Play()
 		tween:Play()
 		tween.Completed:Wait()
+		roleSound:Play()
 
 		task.wait(3)
 

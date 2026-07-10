@@ -1,8 +1,6 @@
 local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
-local ProximityPromptService = game:GetService("ProximityPromptService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 local RunService = game:GetService("RunService") :: RunService
 
@@ -181,10 +179,9 @@ function CombatService:Start()
 			if humanoid and not hit[humanoid] then
 				hit[humanoid] = true
 				StatsService:AddKill(player)
-				hitPlayer.LoadCharacterAsync()
+				GameService:PlayerKilled(hitPlayer)
 				humanoid:TakeDamage(100)
 				knifeSound:Play()
-				GameService:PlayerKilled(hitPlayer)
 			end
 		end
 	end)
@@ -204,12 +201,12 @@ function CombatService:Start()
 			return
 		end
 
-		local revolver = char:FindFirstChildOfClass("Tool")
-		if not revolver then
+		local equippedRevolver = char:FindFirstChildOfClass("Tool")
+		if not equippedRevolver then
 			warn("You don't have a revolver..")
 			return
 		end
-		local muzzle = revolver:FindFirstChild("Muzzle") :: Part
+		local muzzle = equippedRevolver:FindFirstChild("Muzzle") :: Part
 		if not muzzle then
 			warn("Weapon has no muzzle...")
 			return
@@ -276,6 +273,7 @@ function CombatService:Start()
 		end
 
 		if RoleService:GetRole(hitPlayer) == "Murderer" then
+			StatsService:AddKill(player)
 			local humanoid = model:FindFirstChild("Humanoid") :: Humanoid
 			humanoid:TakeDamage(100)
 			GameService:PlayerKilled(hitPlayer)

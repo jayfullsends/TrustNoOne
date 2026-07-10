@@ -8,6 +8,10 @@
       "Configs": { "$path": "src/shared/Configs" }
     },
 
-    "ServerScriptService": { "$path": "src/server" }
+    "ServerScriptService": { "$path": "src/server" },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": { "$path": "src/client" }
+    }
   }
 }
