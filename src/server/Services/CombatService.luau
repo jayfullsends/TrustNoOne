@@ -275,15 +275,25 @@ function CombatService:Start()
 
 		if RoleService:GetRole(hitPlayer) == "Murderer" then
 			StatsService:AddKill(player)
-			local humanoid = model:FindFirstChild("Humanoid") :: Humanoid
 			GameService:PlayerKilled(hitPlayer)
-			humanoid:TakeDamage(100)
+			local humanoid = model:FindFirstChild("Humanoid")
+			if humanoid then
+				humanoid:TakeDamage(100)
+			end
 		elseif RoleService:GetRole(hitPlayer) == "Innocent" then
-			local hitPlayerHum = model:FindFirstChild("Humanoid") :: Humanoid
 			GameService:PlayerKilled(hitPlayer)
-			hitPlayerHum:TakeDamage(100)
-			char:FindFirstChild("Humanoid"):TakeDamage(100)
 			GameService:PlayerKilled(player)
+
+			local hitPlayerHum = model:FindFirstChild("Humanoid")
+			if hitPlayerHum then
+				hitPlayerHum:TakeDamage(100)
+			end
+
+			local shooterHum = char:FindFirstChild("Humanoid")
+
+			if shooterHum then
+				shooterHum:TakeDamage(100)
+			end
 		end
 	end)
 end

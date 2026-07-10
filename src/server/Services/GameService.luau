@@ -71,6 +71,10 @@ function GameService:Init()
 end
 
 function GameService:PlayerKilled(victim)
+	if not PLAYERS_PLAYING then
+		return
+	end
+
 	local player_killed = table.find(PLAYERS_PLAYING, victim)
 	if not player_killed then
 		return
