@@ -24,11 +24,11 @@ RoleService.Roles = {
 
 local PlayerRoles = {}
 
-function RoleService:AssignRoles()
+function RoleService:AssignRoles(player_list)
 	local roles = {}
 	local availableRoles = {}
 
-	for _, player in Players:GetPlayers() do
+	for _, player in player_list do
 		table.insert(availableRoles, player)
 	end
 

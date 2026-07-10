@@ -17,7 +17,7 @@ return {
 	CurrentState = remoteEvents:WaitForChild("CurrentState") :: RemoteEvent,
 
 	--// Inventory Handling
-	GetInventory = remoteFunctions:WaitForChild("GetInventory") :: RemoteEvent,
+	GetInventory = remoteFunctions:WaitForChild("GetInventory") :: RemoteFunction,
 
 	--// Weapon Handling
 	EquipItem = remoteEvents:WaitForChild("EquipItem") :: RemoteEvent,

@@ -1,0 +1,184 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui") :: PlayerGui
+
+--// Main Frame
+local gui = PlayerGui:WaitForChild("RoundStatsUI") :: ScreenGui
+local main = gui:WaitForChild("Main") :: Frame
+local contentFrame = main:WaitForChild("ContentFrame") :: Frame
+
+local UITemplates = ReplicatedStorage:WaitForChild("Templates"):WaitForChild("Gui")
+local playerTemplate = UITemplates:WaitForChild("PlayerTemplate") :: Frame
+
+--// Murderer Hierarchy - 1
+local murdererFrameBorder = contentFrame:WaitForChild("MurdererFrameBorder") :: Frame
+local murdererContentFrame = murdererFrameBorder:WaitForChild("MurdererContentFrame") :: Frame
+
+--// Murderer Hierarchy - 2
+local MurdererStatsBackground = murdererContentFrame:WaitForChild("MurdererStatsBackground") :: Frame
+local murdererStats = MurdererStatsBackground:WaitForChild("MurdererStats") :: Frame
+local murdererKillStats = murdererStats:WaitForChild("KillsStat") :: Frame
+local playersKilledAmount = murdererKillStats:WaitForChild("PlayersKilledAmount") :: TextLabel
+
+local murdererplayerIconBackground = murdererContentFrame:WaitForChild("PlayerIconBackground") :: Frame
+local murdererplayerIcon = murdererplayerIconBackground:WaitForChild("PlayerIcon") :: Frame
+local murdererPlayerImage = murdererplayerIcon:WaitForChild("PlayerImage") :: ImageLabel
+local murdererDisplayName = murdererContentFrame:WaitForChild("PlayerDisplayName") :: TextLabel
+
+--// Players Content Frame
+local playersContentFrameBackground = contentFrame:WaitForChild("PlayersContentFrameBackground") :: Frame
+local playersContentFrame = playersContentFrameBackground:WaitForChild("PlayersContentFrame") :: Frame
+local topBar = playersContentFrame:WaitForChild("Topbar") :: Frame
+local playersHolder = topBar:WaitForChild("PlayersHolder") :: ScrollingFrame
+
+--// Sheriff Frame Border
+local sheriffFrameBorder = contentFrame:WaitForChild("SheriffFrameBorder") :: Frame
+local sheriffContentFrame = sheriffFrameBorder:WaitForChild("SheriffContentFrame") :: Frame
+local sheriffDisplayName = sheriffContentFrame:WaitForChild("PlayerDisplayName") :: TextLabel
+
+local sheriffplayerIconBackground = sheriffContentFrame:WaitForChild("PlayerIconBackground") :: Frame
+local sheriffplayerIcon = sheriffplayerIconBackground:WaitForChild("PlayerIcon") :: Frame
+local sheriffplayerImage = sheriffplayerIcon:WaitForChild("PlayerImage") :: ImageLabel
+
+local sheriffStatsBackground = sheriffContentFrame:WaitForChild("SheriffStatsBackground") :: Frame
+local sheriffStats = sheriffStatsBackground:WaitForChild("SheriffStats") :: Frame
+local sheriffKillStats = sheriffStats:WaitForChild("KillsStat") :: Frame
+local shotsFiredAmount = sheriffKillStats:WaitForChild("ShotsFiredAmount") :: TextLabel
+
+local RoundWinner = gui:WaitForChild("RoundWinner") :: Frame
+local WinnersText = RoundWinner:WaitForChild("Winners") :: TextLabel
+
+--// Stats Frame
+local statsFrame = gui:WaitForChild("StatsFrame") :: Frame
+local statsFrameContent = statsFrame:WaitForChild("StatsFrameContent") :: Frame
+
+--// XP Handling
+local xpBar = statsFrameContent:WaitForChild("XPBar") :: Frame
+local xpFill = xpBar:WaitForChild("XpFill") :: Frame
+local playersCurrentLevel = statsFrameContent:WaitForChild("PlayersCurrentLevel") :: TextLabel
+local playersNextLevel = statsFrameContent:WaitForChild("PlayersNextLevel") :: TextLabel
+local xpEarnedAmount = statsFrameContent:WaitForChild("XPEarnedAmount") :: TextLabel
+local xpNeeded = xpBar:WaitForChild("XPNeeded") :: TextLabel
+
+local closeButton = statsFrame:WaitForChild("CloseButton") :: TextButton
+
+local remoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
+
+--// Functions
+local function clearRoster()
+	for _, template in playersHolder:GetChildren() do
+		if template:IsA("Frame") then
+			template:Destroy()
+		end
+	end
+end
+
+local function populateMurderer(userId)
+	local content
+	pcall(function()
+		content = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+	end)
+
+	murdererPlayerImage.Image = content
+
+	local player = Players:GetPlayerByUserId(userId)
+	if player then
+		murdererDisplayName.Text = player.Name
+	else
+		murdererDisplayName.Text = "Player Left.."
+	end
+	playersKilledAmount.Text = "2 Kills"
+end
+
+local function populateSheriff(userId)
+	local content
+	pcall(function()
+		content = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+	end)
+
+	sheriffplayerImage.Image = content
+
+	local player = Players:GetPlayerByUserId(userId)
+
+	if player then
+		sheriffDisplayName.Text = player.Name
+	else
+		sheriffDisplayName.Text = "Player Left.."
+	end
+	shotsFiredAmount.Text = "0 Shots Fired"
+end
+
+local function buildRoster(innocents)
+	for _, userId in innocents do
+		local playerName = "Unknown"
+		local content
+		pcall(function()
+			content = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+		end)
+
+		local clone = playerTemplate:Clone()
+		local playerRoleFrame = clone:WaitForChild("PlayerRole") :: Frame
+		pcall(function()
+			playerName = Players:GetNameFromUserIdAsync(userId)
+		end)
+		local playerRoleName = playerRoleFrame:WaitForChild("PlayersRoleName")
+		playerRoleName.Text = "Innocent"
+		clone:WaitForChild("PlayerImage").Image = content
+		clone:WaitForChild("PlayersName").Text = playerName
+		clone.Parent = playersHolder
+		clone.Visible = true
+	end
+end
+
+local function buildWinTitle(winners)
+	if winners == "Murderer" then
+		WinnersText.Text = "Murderer Wins!"
+	elseif winners == "Innocent" then
+		WinnersText.Text = "Innocents Win!"
+	end
+end
+
+local function buildStats(data)
+	local playerInfo = data
+	playersCurrentLevel.Text = "Lvl : " .. playerInfo.level
+	playersNextLevel.Text = "Lvl : " .. (playerInfo.level + 1)
+	xpNeeded.Text = playerInfo.earned .. " / " .. playerInfo.xpNeeded
+	xpEarnedAmount.Text = "XP Earned : +" .. playerInfo.earned
+	local ratio = math.clamp(playerInfo.currentXP / playerInfo.xpNeeded, 0, 1)
+
+	local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
+
+	task.wait(1)
+	local tween = TweenService:Create(xpFill, tweenInfo, { Size = UDim2.new(ratio, 0, 1, 0) })
+	tween:Play()
+end
+
+local RoundStatsController = {}
+
+function RoundStatsController:Init()
+	return
+end
+
+function RoundStatsController:Start()
+	remoteStorage.RoundEnded.OnClientEvent:Connect(function(data)
+		clearRoster()
+		populateMurderer(data.murderer)
+		populateSheriff(data.sheriff)
+		buildWinTitle(data.winner)
+		buildRoster(data.innocents)
+		buildStats(data)
+		gui.Enabled = true
+		task.delay(10, function()
+			gui.Enabled = false
+		end)
+	end)
+
+	closeButton.MouseButton1Click:Connect(function()
+		gui.Enabled = not gui.Enabled
+	end)
+end
+
+return RoundStatsController

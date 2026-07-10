@@ -1,17 +1,13 @@
 local Players = game:GetService("Players") :: Players
 local ReplicatedStorage = game:GetService("ReplicatedStorage") :: ReplicatedStorage
-local ServerStorage = game:GetService("ServerStorage") :: ServerStorage
 
 --// Modules
-local GameRolesConfig = require(ReplicatedStorage.Configs.GameRolesConfig)
 local Framework = require(ReplicatedStorage.Modules.Framework)
 local RoleService = require(script.Parent:WaitForChild("RoleService"))
 local remoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
 local gameStates = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameStates"))
 
 local gameSpawns = workspace.Map.Spawns:GetChildren()
-
-print("Hello")
 
 --// Game Variables
 --// Start
@@ -71,6 +67,7 @@ end
 
 function GameService:Init()
 	print("[Game Service] - Init..")
+	Players.CharacterAutoLoads = false
 	CombatService = Framework:GetServices("CombatService")
 	StatsService = Framework:GetServices("StatsService")
 end
@@ -104,6 +101,15 @@ end
 
 function GameService:Start()
 	print("[Game Service] - Started..")
+
+	Players.PlayerAdded:Connect(function(player: Player)
+		player:LoadCharacterAsync()
+	end)
+
+	for _, player in Players:GetPlayers() do
+		player:LoadCharacterAsync()
+	end
+
 	while true do
 		local ok, err = pcall(function()
 			if #Players:GetPlayers() < MIN_PLAYERS then
@@ -112,6 +118,7 @@ function GameService:Start()
 				return
 			end
 
+			ROUND_WINNER = nil
 			StatsService:Reset()
 			PLAYERS_PLAYING = {}
 			results = {}
@@ -121,7 +128,7 @@ function GameService:Start()
 
 			for i = INTERMISSION_TIME, 0, -1 do
 				remoteStorage.TimerEvent:FireAllClients("Intermission_Countdown", i)
-				if i == 0 or i <= 0 then
+				if i == 0 then
 					remoteStorage.TimerEvent:FireAllClients("Round_Starting", "Round Starting..")
 					for _, player in Players:GetPlayers() do
 						table.insert(ROUND_PARTICIPANTS, player)
@@ -133,7 +140,8 @@ function GameService:Start()
 
 			setState(gameStates.Active)
 			self:TeleportPlayers()
-			RoleService:AssignRoles()
+
+			RoleService:AssignRoles(ROUND_PARTICIPANTS)
 
 			for _, player in PLAYERS_PLAYING do
 				if not player then
@@ -192,7 +200,7 @@ function GameService:Start()
 
 			task.wait(3)
 
-			for _, player in PLAYERS_PLAYING do
+			for _, player in Players:GetPlayers() do
 				player:LoadCharacterAsync()
 			end
 
@@ -204,6 +212,7 @@ function GameService:Start()
 			StatsService:Reset()
 			ROUND_WINNER = nil
 		end)
+
 		if not ok then
 			warn("GameService Failed due to : " .. err)
 			task.wait(3)

@@ -143,8 +143,8 @@ function CombatService:Start()
 			return
 		end
 
-		local knife = char:FindFirstChildOfClass("Tool")
-		if not knife then
+		local playersKnifeTool = char:FindFirstChildOfClass("Tool")
+		if not playersKnifeTool then
 			warn("You don't have a knife!?")
 			return
 		end
