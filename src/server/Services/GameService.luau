@@ -67,7 +67,6 @@ end
 
 function GameService:Init()
 	print("[Game Service] - Init..")
-	Players.CharacterAutoLoads = false
 	CombatService = Framework:GetServices("CombatService")
 	StatsService = Framework:GetServices("StatsService")
 end
@@ -101,15 +100,6 @@ end
 
 function GameService:Start()
 	print("[Game Service] - Started..")
-
-	Players.PlayerAdded:Connect(function(player: Player)
-		player:LoadCharacterAsync()
-	end)
-
-	for _, player in Players:GetPlayers() do
-		player:LoadCharacterAsync()
-	end
-
 	while true do
 		local ok, err = pcall(function()
 			if #Players:GetPlayers() < MIN_PLAYERS then
@@ -200,7 +190,7 @@ function GameService:Start()
 
 			task.wait(3)
 
-			for _, player in Players:GetPlayers() do
+			for _, player in PLAYERS_PLAYING do
 				player:LoadCharacterAsync()
 			end
 

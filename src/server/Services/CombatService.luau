@@ -181,6 +181,7 @@ function CombatService:Start()
 			if humanoid and not hit[humanoid] then
 				hit[humanoid] = true
 				StatsService:AddKill(player)
+				hitPlayer.LoadCharacterAsync()
 				humanoid:TakeDamage(100)
 				knifeSound:Play()
 				GameService:PlayerKilled(hitPlayer)
