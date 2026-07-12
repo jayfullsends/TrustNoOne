@@ -27,6 +27,7 @@ local results
 local GameService = {}
 local CombatService
 local StatsService
+local CoinService
 
 local function setState(stateName)
 	CURRENT_STATE = stateName
@@ -68,6 +69,7 @@ function GameService:Init()
 	print("[Game Service] - Init..")
 	CombatService = Framework:GetServices("CombatService")
 	StatsService = Framework:GetServices("StatsService")
+	CoinService = Framework:GetServices("CoinService")
 end
 
 function GameService:PlayerKilled(victim)
@@ -112,6 +114,8 @@ function GameService:Start()
 			end
 
 			ROUND_WINNER = nil
+			CoinService:StopSpawning()
+			CoinService:ClearCoins()
 			StatsService:Reset()
 			PLAYERS_PLAYING = {}
 			results = {}
@@ -147,7 +151,7 @@ function GameService:Start()
 
 			task.wait(5)
 
-			for i = 10, 1, -1 do
+			for i = 5, 1, -1 do
 				remoteStorage.TimerEvent:FireAllClients("Round_Starting", "Giving Tools In : " .. i .. " Seconds!")
 				task.wait(1)
 			end
@@ -155,6 +159,8 @@ function GameService:Start()
 			for _, player in PLAYERS_PLAYING do
 				CombatService:GiveWeapon(player, RoleService:GetRole(player))
 			end
+
+			CoinService:StartSpawning()
 
 			for i = ROUND_DURATION, 0, -1 do
 				remoteStorage.TimerEvent:FireAllClients("Round_Countdown", i)
@@ -176,6 +182,8 @@ function GameService:Start()
 
 				results[player.UserId] = StatsService:AwardPlayer(player, { won = won, survived = survived })
 			end
+
+			CoinService:StopSpawning()
 
 			local innocents, murderer, sheriff = RoleService:Lookup()
 
@@ -203,12 +211,13 @@ function GameService:Start()
 				player:LoadCharacterAsync()
 			end
 
-			task.wait(3)
+			CoinService:ClearCoins()
 			PLAYERS_PLAYING = {}
 			ROUND_PARTICIPANTS = {}
 			results = {}
 			CombatService:ResetArmedPlayers()
 			StatsService:Reset()
+
 			ROUND_WINNER = nil
 		end)
 

@@ -12,7 +12,9 @@ local playerData = {}
 local loaded = {}
 
 local DEFAULT_DATA = {
-	Money = 0,
+	Currencies = {
+		Coins = 0,
+	},
 	XP = 0,
 	Level = 1,
 	Owned = {},
@@ -49,7 +51,8 @@ local function copyDefaults()
 	return deepCopy(DEFAULT_DATA)
 end
 
-local function reconcileData(data)
+local function reconcileData(data, template)
+	template = template or DEFAULT_DATA
 	for key, value in DEFAULT_DATA do
 		if data[key] == nil then
 			if typeof(value) == "table" then
@@ -57,6 +60,8 @@ local function reconcileData(data)
 			else
 				data[key] = value
 			end
+		elseif typeof(value) == "table" and typeof(data[key]) == "table" then
+			reconcileData(data[key], value)
 		end
 	end
 	return data
@@ -68,6 +73,11 @@ end
 
 local DataService = {}
 
+function DataService:GetCurrency(player: Player, currency_type)
+	local data = playerData[player.UserId]
+	return data.Currencies[currency_type]
+end
+
 function DataService:GetData(player: Player)
 	if not loaded[player.UserId] then
 		return
@@ -75,12 +85,16 @@ function DataService:GetData(player: Player)
 	return playerData[player.UserId]
 end
 
-function DataService:AddMoney(player: Player, amount: number)
+function DataService:AddCurrency(player: Player, currency_type: string, amount: number)
 	local data = playerData[player.UserId]
 	if not data then
 		return
 	end
-	data.Money += amount
+	if data.Currencies[currency_type] then
+		data.Currencies[currency_type] += amount
+	else
+		warn("Currency Type not found.")
+	end
 end
 
 function DataService:AddXP(player: Player, amount: number)

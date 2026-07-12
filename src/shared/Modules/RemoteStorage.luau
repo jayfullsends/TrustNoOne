@@ -12,6 +12,8 @@ return {
 	RoundEnded = remoteEvents:WaitForChild("RoundEnded") :: RemoteEvent,
 	RoundSummary = remoteEvents:WaitForChild("RoundSummary") :: RemoteEvent,
 
+	--// Currency Handling
+	CoinCollected = remoteEvents:WaitForChild("CoinCollected") :: RemoteEvent,
 	--/ Timer
 	TimerEvent = remoteEvents:WaitForChild("TimerEvent") :: RemoteEvent,
 	CurrentState = remoteEvents:WaitForChild("CurrentState") :: RemoteEvent,
