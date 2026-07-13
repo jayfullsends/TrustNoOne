@@ -92,8 +92,8 @@ local function populateMurderer(userId, kills)
 
 	murdererPlayerImage.Image = content
 
-	local player = Players:GetPlayerByUserId(userId)
-	if player then
+	local Player_Murderer = Players:GetPlayerByUserId(userId)
+	if Player_Murderer then
 		murdererDisplayName.Text = player.Name
 	else
 		murdererDisplayName.Text = "Player Left.."
@@ -110,9 +110,9 @@ local function populateSheriff(userId, shots)
 
 	sheriffplayerImage.Image = content
 
-	local player = Players:GetPlayerByUserId(userId)
+	local sheriffPlayer = Players:GetPlayerByUserId(userId)
 
-	if player then
+	if sheriffPlayer then
 		sheriffDisplayName.Text = player.Name
 	else
 		sheriffDisplayName.Text = "Player Left.."
@@ -162,7 +162,7 @@ local function buildStats(data)
 	local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
 
 	task.wait(1)
-	local tween = TweenService:Create(xpFill, tweenInfo, { Size = UDim2.new(ratio, 0, 1, 0) })
+	local tween = TweenService:Create(xpFill, tweenInfo, { Size = UDim2.fromScale(ratio, 1) })
 	tween:Play()
 end
 

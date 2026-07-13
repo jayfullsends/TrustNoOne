@@ -15,10 +15,19 @@ local DEFAULT_DATA = {
 	Currencies = {
 		Coins = 0,
 	},
+	Inventory = {
+		Knives = {},
+		Guns = {},
+		Pets = {},
+		Toys = {},
+	},
 	XP = 0,
 	Level = 1,
 	Owned = {},
-	Equipped = {},
+	Equipped = {
+		Knife = nil,
+		Gun = nil,
+	},
 	Stats = {
 		Wins = 0,
 		RoundsPlayed = 0,

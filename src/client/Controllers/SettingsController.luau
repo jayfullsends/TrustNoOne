@@ -1,0 +1,30 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local remoteStorage = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage")
+
+local player = Players.LocalPlayer
+local PlayerGui = player.PlayerGui or player:WaitForChild("PlayerGui") :: PlayerGui
+
+--// UI Vars
+local SettingsUI = PlayerGui:WaitForChild("SettingsUI") :: ScreenGui
+
+local SettingsController = {}
+
+function SettingsController:Open()
+	SettingsUI.Enabled = true
+end
+
+function SettingsController.Close()
+	SettingsUI.Enabled = false
+end
+
+function SettingsController:Init()
+	return
+end
+
+function SettingsController:Start()
+	return
+end
+
+return SettingsController
