@@ -14,12 +14,8 @@ local mainFrame = shopUI:WaitForChild("Mainframe")
 
 local ShopController = {}
 
-function ShopController:Open()
-	shopUI.Enabled = true
-end
-
-function ShopController:Close()
-	shopUI.Enabled = false
+function ShopController:OpenOrClose()
+	shopUI.Enabled = not shopUI.Enabled
 end
 
 function ShopController:Init()

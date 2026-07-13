@@ -11,12 +11,8 @@ local inventoryUI = PlayerGui:WaitForChild("InventoryUI") :: ScreenGui
 
 local InventoryController = {}
 
-function InventoryController:Open()
-	inventoryUI.Enabled = true
-end
-
-function InventoryController:Close()
-	inventoryUI.Enabled = false
+function InventoryController:OpenOrClose()
+	inventoryUI.Enabled = not inventoryUI.Enabled
 end
 
 function InventoryController:Init()

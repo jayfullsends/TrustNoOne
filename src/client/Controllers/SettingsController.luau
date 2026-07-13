@@ -11,12 +11,8 @@ local SettingsUI = PlayerGui:WaitForChild("SettingsUI") :: ScreenGui
 
 local SettingsController = {}
 
-function SettingsController:Open()
-	SettingsUI.Enabled = true
-end
-
-function SettingsController.Close()
-	SettingsUI.Enabled = false
+function SettingsController:OpenOrClose()
+	SettingsUI.Enabled = not SettingsUI.Enabled
 end
 
 function SettingsController:Init()

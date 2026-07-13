@@ -10,12 +10,8 @@ local SpectateUI = PlayerGui:WaitForChild("SpectateUI") :: ScreenGui
 
 local SpectateController = {}
 
-function SpectateController:Open()
-	SpectateUI.Enabled = true
-end
-
-function SpectateController:Close()
-	SpectateUI.Enabled = false
+function SpectateController:OpenOrClose()
+	SpectateUI.Enabled = not SpectateUI.Enabled
 end
 
 function SpectateController:Init()
