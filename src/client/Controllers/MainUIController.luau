@@ -3,6 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Framework = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Framework"))
 
+local remoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
+
 local player = Players.LocalPlayer
 local playerGui = player.PlayerGui or player:WaitForChild("PlayerGui")
 
@@ -35,21 +37,21 @@ local openSettingsButton = settingsButton:WaitForChild("OpenSettingsButton") :: 
 --// Shop
 local shopButtonFrame = buttonsHolder:WaitForChild("ShopButtonFrame") :: Frame
 local shopButton = shopButtonFrame:WaitForChild("ShopButton") :: Frame
-local openShopButton = shopButton:WaitForChild("OpenShopButton") :: TextButton
+-- local openShopButton = shopButton:WaitForChild("OpenShopBsutton") :: TextButton
 
 --// Spectate
 local spectateButtonFrame = buttonsHolder:WaitForChild("SpectateButtonFrame") :: Frame
 local spectateButton = spectateButtonFrame:WaitForChild("SpectateButton") :: Frame
 local openSpectateButton = spectateButton:WaitForChild("OpenSpectateButton") :: TextButton
 
-local ShopController
-local InventoryController
-local SpectateController
-local SettingsController
+-- local ShopController
+local InventoryUIController
+local SpectateUIController
+local SettingsUIController
 
 local MainUIController = {}
 
-function setupOpen(button: TextButton, Controller: any)
+local function setupOpen(button: TextButton, Controller: any)
 	button.MouseButton1Click:Connect(function()
 		Controller:OpenOrClose()
 	end)
@@ -57,17 +59,17 @@ end
 
 function MainUIController:Init()
 	print("MainUI Controller Init..")
-	ShopController = Framework:GetServices("ShopController")
-	InventoryController = Framework:GetServices("InventoryController")
-	SpectateController = Framework:GetServices("SpectateController")
-	SettingsController = Framework:GetServices("SettingsController")
+	-- ShopController = Framework:GetServices("ShopUIController")
+	InventoryUIController = Framework:GetServices("InventoryUIController")
+	SpectateUIController = Framework:GetServices("SpectateUIController")
+	SettingsUIController = Framework:GetServices("SettingsUIController")
 end
 
 function MainUIController:Start()
-	setupOpen(openShopButton, ShopController)
-	setupOpen(openInventoryButton, InventoryController)
-	setupOpen(openSpectateButton, SpectateController)
-	setupOpen(openSettingsButton, SettingsController)
+	-- setupOpen(openShopButton, ShopController)
+	setupOpen(openInventoryButton, InventoryUIController)
+	setupOpen(openSpectateButton, SpectateUIController)
+	setupOpen(openSettingsButton, SettingsUIController)
 end
 
 return MainUIController

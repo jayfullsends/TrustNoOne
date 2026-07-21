@@ -1,8 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local remoteStorage = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage")
-
 local player = Players.LocalPlayer
 local PlayerGui = player.PlayerGui or player:WaitForChild("PlayerGui") :: PlayerGui
 

@@ -34,7 +34,7 @@ function StatsService:AwardPlayer(player: Player, context)
 	end
 	xp += roundStats.Kills * XP_REWARDS.PerKill
 
-	DataService:AddXP(player, xp)
+	local startLevel, startXP, startXPNeeded = DataService:AddXP(player, xp)
 
 	local data = DataService:GetData(player)
 	if not data then
@@ -48,9 +48,23 @@ function StatsService:AwardPlayer(player: Player, context)
 		}
 	end
 
+	DataService:AddStat(player, "RoundsPlayed", 1)
+
+	if context.won then
+		DataService:AddStat(player, "Wins", 1)
+	end
+	DataService:AddStat(player, "ShotsFired", roundStats.Shots)
+
+	if context.role == "Murderer" then
+		DataService:AddStat(player, "MurdererKills", roundStats.Kills)
+	end
+
 	return {
 		earned = xp,
 		level = data.Level,
+		startLevel = startLevel,
+		startXP = startXP,
+		startXPNeeded = startXPNeeded,
 		currentXP = data.XP,
 		xpNeeded = DataService:xpForLevel(data.Level),
 		kills = roundStats.Kills,

@@ -14,6 +14,7 @@ return {
 
 	--// Currency Handling
 	CoinCollected = remoteEvents:WaitForChild("CoinCollected") :: RemoteEvent,
+
 	--/ Timer
 	TimerEvent = remoteEvents:WaitForChild("TimerEvent") :: RemoteEvent,
 	CurrentState = remoteEvents:WaitForChild("CurrentState") :: RemoteEvent,
@@ -22,7 +23,7 @@ return {
 	GetInventory = remoteFunctions:WaitForChild("GetInventory") :: RemoteFunction,
 
 	--// Weapon Handling
-	EquipItem = remoteEvents:WaitForChild("EquipItem") :: RemoteEvent,
+	EquipItem = remoteFunctions:WaitForChild("EquipItem") :: RemoteFunction,
 	UseWeapon = remoteEvents:WaitForChild("UseWeapon") :: RemoteEvent,
 
 	--// Weapons

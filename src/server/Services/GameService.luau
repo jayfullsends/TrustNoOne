@@ -15,7 +15,7 @@ local MIN_PLAYERS = 3
 local INTERMISSION_TIME = 5
 
 --// Main
-local ROUND_DURATION = 30
+local ROUND_DURATION = 15
 local CURRENT_STATE
 local ROUND_WINNER
 
@@ -180,26 +180,33 @@ function GameService:Start()
 				local survived = table.find(PLAYERS_PLAYING, player) ~= nil
 				local won = didThisRoleWin(role, ROUND_WINNER)
 
-				results[player.UserId] = StatsService:AwardPlayer(player, { won = won, survived = survived })
+				results[player.UserId] =
+					StatsService:AwardPlayer(player, { won = won, survived = survived, role = role })
 			end
 
 			CoinService:StopSpawning()
 
 			local innocents, murderer, sheriff = RoleService:Lookup()
 
+			local murdererResult = results[murderer]
+			local sheriffResult = results[sheriff]
+
 			for _, player in ROUND_PARTICIPANTS do
 				local r = results[player.UserId]
 				remoteStorage.RoundEnded:FireClient(player, {
 					winner = ROUND_WINNER,
 					murderer = murderer,
-					murderer_kills = results[murderer].kills,
+					murderer_kills = murdererResult and murdererResult.kills or 0,
 					sheriff = sheriff,
-					sheriff_shots = results[sheriff].shots,
+					sheriff_shots = sheriffResult and sheriffResult.shots or 0,
 					innocents = innocents,
 					earned = r.earned,
 					level = r.level,
 					currentXP = r.currentXP,
 					xpNeeded = r.xpNeeded,
+					startLevel = r.startLevel,
+					startXP = r.startXP,
+					startXPNeeded = r.startXPNeeded,
 				})
 			end
 
@@ -207,7 +214,7 @@ function GameService:Start()
 
 			task.wait(1)
 
-			for _, player in PLAYERS_PLAYING do
+			for _, player in ROUND_PARTICIPANTS do
 				player:LoadCharacterAsync()
 			end
 

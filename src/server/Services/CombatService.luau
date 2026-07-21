@@ -4,18 +4,20 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local RunService = game:GetService("RunService") :: RunService
 
+local itemConfig = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("ItemConfig"))
+
 local GameStates = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameStates"))
 local remoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
 local Framework = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Framework"))
 
-local knife = ServerStorage:WaitForChild("Tools"):WaitForChild("Knife")
-local revolver = ServerStorage:WaitForChild("Tools"):WaitForChild("Revolver")
+local knivesFolder = ServerStorage.Tools.Knives
+local gunsFolder = ServerStorage.Tools.Guns
 local revolverPickup = ServerStorage:WaitForChild("Tools"):WaitForChild("RevolverPickup")
 
 local WEAPONS = {
 	Knife = {
 		SWING_COOLDOWN = 0.75,
-		Range = 3,
+		Range = 4,
 	},
 
 	Revolver = {
@@ -24,11 +26,17 @@ local WEAPONS = {
 	},
 }
 
+local DEFAULT_ITEMS = {
+	Knives = "DefaultKnife",
+	Guns = "DefaultRevolver",
+}
+
 --// Module Sevices
 local CombatService = {}
 local GameService
 local RoleService
 local StatsService
+local DataService
 
 --// Weapon Handling
 local cooldowns = {}
@@ -40,6 +48,7 @@ function CombatService:Init()
 	GameService = Framework:GetServices("GameService")
 	RoleService = Framework:GetServices("RoleService")
 	StatsService = Framework:GetServices("StatsService")
+	DataService = Framework:GetServices("DataService")
 end
 
 function CombatService:ResetArmedPlayers()
@@ -48,6 +57,38 @@ function CombatService:ResetArmedPlayers()
 		droppedGun:Destroy()
 		droppedGun = nil
 	end
+end
+
+local function getEquippedTool(player: Player, category, folder, defaultKey)
+	local playerData = DataService:GetData(player)
+	if not playerData then
+		return
+	end
+
+	local itemKey = playerData.Equipped[category] or defaultKey
+	if not itemKey then
+		return
+	end
+
+	local info = itemConfig[itemKey]
+	if not info then
+		itemKey = defaultKey
+	end
+
+	info = itemConfig[itemKey]
+
+	if itemConfig[itemKey] == nil then
+		warn("Key name mismatch..")
+		return
+	end
+
+	local clone = folder:FindFirstChild(info.ModelName)
+	if not clone then
+		warn("No tool found in the folder..")
+		return
+	end
+
+	return clone:Clone()
 end
 
 function CombatService:DropGun(victim: Player)
@@ -88,8 +129,13 @@ function CombatService:DropGun(victim: Player)
 			return
 		end
 
+		local tool = getEquippedTool(player, "Guns", gunsFolder, DEFAULT_ITEMS.Guns)
+		if not tool then
+			return
+		end
+
 		pickedUp = true
-		local tool = revolver:Clone()
+
 		tool.Parent = player.Backpack
 		armed[player.UserId] = true
 		clone:Destroy()
@@ -115,12 +161,18 @@ end
 
 function CombatService:GiveWeapon(player: Player, role: string)
 	if role == "Murderer" then
-		local clone = knife:Clone()
-		clone.Parent = player.Backpack or player.Character
+		local clone = getEquippedTool(player, "Knives", knivesFolder, DEFAULT_ITEMS.Knives)
+
+		if clone then
+			clone.Parent = player.Backpack or player.Character
+		end
 	elseif role == "Sheriff" then
-		local clone = revolver:Clone()
-		clone.Parent = player.Backpack or player.Character
-		armed[player.UserId] = true
+		local clone = getEquippedTool(player, "Guns", gunsFolder, DEFAULT_ITEMS.Guns)
+
+		if clone then
+			clone.Parent = player.Backpack or player.Character
+			armed[player.UserId] = true
+		end
 	end
 end
 
@@ -148,10 +200,10 @@ function CombatService:Start()
 			return
 		end
 
-		local knifeSound = knife:WaitForChild("BlueHandle"):WaitForChild("HitSound") :: Sound
-		if not knifeSound then
-			return
-		end
+		-- local knifeSound = knife:WaitForChild("BlueHandle"):WaitForChild("HitSound") :: Sound
+		-- if not knifeSound then
+		-- 	return
+		-- end
 
 		if RoleService:GetRole(player) ~= "Murderer" then
 			return
@@ -182,7 +234,7 @@ function CombatService:Start()
 				StatsService:AddKill(player)
 				GameService:PlayerKilled(hitPlayer)
 				humanoid:TakeDamage(100)
-				knifeSound:Play()
+				-- knifeSound:Play()
 			end
 		end
 	end)

@@ -1,22 +1,20 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local remoteStorage = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage")
-
 local player = Players.LocalPlayer
 local PlayerGui = player.PlayerGui or player:WaitForChild("PlayerGui") :: PlayerGui
 
 --// UI Vars
-local shopUI = PlayerGui:WaitForChild("ShopUI") :: ScreenGui
+-- local shopUI = PlayerGui:WaitForChild("ShopUI") :: ScreenGui
 
 --// Frames
-local mainFrame = shopUI:WaitForChild("Mainframe")
+-- local mainFrame = shopUI:WaitForChild("Mainframe")
 
 local ShopController = {}
 
-function ShopController:OpenOrClose()
-	shopUI.Enabled = not shopUI.Enabled
-end
+-- function ShopController:OpenOrClose()
+-- 	shopUI.Enabled = not shopUI.Enabled
+-- end
 
 function ShopController:Init()
 	print("Shop Controller Init..")

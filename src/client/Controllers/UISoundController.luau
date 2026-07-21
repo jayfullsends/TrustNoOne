@@ -13,13 +13,13 @@ function UISoundController:Init()
 end
 
 function UISoundController:Start()
-	for _, descendant in PlayerGui:GetDescendants() do
+	PlayerGui.DescendantAdded:Connect(function(descendant)
 		if descendant:IsA("GuiButton") then
 			descendant.Activated:Connect(function()
 				soundsFolder.Click:Play()
 			end)
 		end
-	end
+	end)
 end
 
 return UISoundController

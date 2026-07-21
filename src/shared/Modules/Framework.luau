@@ -20,7 +20,9 @@ function Framework:Start(serviceFolder: Folder)
 
 	for _, service in Services do
 		if service.Start then
-			service:Start()
+			task.spawn(function()
+				service:Start()
+			end)
 		end
 	end
 end

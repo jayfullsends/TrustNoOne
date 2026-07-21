@@ -76,6 +76,13 @@ local function clearRoster()
 	end
 end
 
+local function tweenTo(ratio, duration)
+	local info = TweenInfo.new(duration, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+	local tween = TweenService:Create(xpFill, info, { Size = UDim2.fromScale(ratio, 1) })
+	tween:Play()
+	tween.Completed:Wait()
+end
+
 local function pluralize(count, singular, plural)
 	if count == 1 then
 		return count .. " " .. singular
@@ -94,7 +101,7 @@ local function populateMurderer(userId, kills)
 
 	local Player_Murderer = Players:GetPlayerByUserId(userId)
 	if Player_Murderer then
-		murdererDisplayName.Text = player.Name
+		murdererDisplayName.Text = Player_Murderer.Name
 	else
 		murdererDisplayName.Text = "Player Left.."
 	end
@@ -113,7 +120,7 @@ local function populateSheriff(userId, shots)
 	local sheriffPlayer = Players:GetPlayerByUserId(userId)
 
 	if sheriffPlayer then
-		sheriffDisplayName.Text = player.Name
+		sheriffDisplayName.Text = sheriffPlayer.Name
 	else
 		sheriffDisplayName.Text = "Player Left.."
 	end
@@ -153,17 +160,37 @@ end
 
 local function buildStats(data)
 	local playerInfo = data
-	playersCurrentLevel.Text = "Lvl : " .. playerInfo.level
-	playersNextLevel.Text = "Lvl : " .. (playerInfo.level + 1)
-	xpNeeded.Text = playerInfo.currentXP .. " / " .. playerInfo.xpNeeded
+	local startRatio = math.clamp(data.startXP / data.startXPNeeded, 0, 1)
+	local endRatio = math.clamp(data.currentXP / data.xpNeeded, 0, 1)
+	local levelsGained = data.level - data.startLevel
+
+	playersCurrentLevel.Text = "Lvl : " .. data.startLevel
+	playersNextLevel.Text = "Lvl : " .. (data.startLevel + 1)
+	xpNeeded.Text = data.startXP .. " / " .. data.startXPNeeded
 	xpEarnedAmount.Text = "XP Earned : +" .. playerInfo.earned
-	local ratio = math.clamp(playerInfo.currentXP / playerInfo.xpNeeded, 0, 1)
 
-	local tweenInfo = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.In)
-
+	xpFill.Size = UDim2.fromScale(startRatio, 1)
 	task.wait(1)
-	local tween = TweenService:Create(xpFill, tweenInfo, { Size = UDim2.fromScale(ratio, 1) })
-	tween:Play()
+
+	if levelsGained == 0 then
+		tweenTo(endRatio, 1.25)
+	else
+		tweenTo(1, 1.25)
+		xpFill.Size = UDim2.fromScale(0, 1)
+
+		playersCurrentLevel.Text = "Lvl : " .. data.level
+		playersNextLevel.Text = "Lvl : " .. (data.level + 1)
+		xpNeeded.Text = playerInfo.currentXP .. " / " .. playerInfo.xpNeeded
+
+		for i = 2, levelsGained do
+			tweenTo(1, 0.3)
+			xpFill.Size = UDim2.fromScale(0, 1)
+		end
+
+		tweenTo(endRatio, 1.25)
+	end
+
+	xpNeeded.Text = playerInfo.currentXP .. " / " .. playerInfo.xpNeeded
 end
 
 local RoundStatsController = {}
@@ -179,11 +206,13 @@ function RoundStatsController:Start()
 		populateSheriff(data.sheriff, data.sheriff_shots)
 		buildWinTitle(data.winner)
 		buildRoster(data.innocents)
-		buildStats(data)
 		gui.Enabled = true
+
 		task.delay(10, function()
 			gui.Enabled = false
 		end)
+
+		buildStats(data)
 	end)
 
 	closeButton.MouseButton1Click:Connect(function()
