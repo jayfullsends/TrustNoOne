@@ -224,9 +224,30 @@ function CombatService:Start()
 				continue
 			end
 
+			local HitPlayerHRP = playerModel:FindFirstChild("HumanoidRootPart")
+			if not HitPlayerHRP then
+				return
+			end
+
+			local raycastParams = RaycastParams.new()
+			raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+			raycastParams.FilterDescendantsInstances = { char }
+
+			local raycast = workspace:Raycast(hrp.Position, (HitPlayerHRP.Position - hrp.Position), raycastParams)
+			if not raycast then
+				return
+			end
+
 			local humanoid = playerModel:FindFirstChildWhichIsA("Humanoid") :: Humanoid
 			if humanoid == player.Character:FindFirstChild("Humanoid") then
 				continue
+			end
+
+			local hitPart = raycast.Instance
+			local model = hitPart:FindFirstAncestorOfClass("Model") :: Model
+			local hitPlayerRaycast = Players:GetPlayerFromCharacter(model)
+			if not hitPlayerRaycast then
+				return
 			end
 
 			if humanoid and not hit[humanoid] then

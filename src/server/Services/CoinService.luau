@@ -27,6 +27,7 @@ local function spawnCoin()
 	local clone = coin:Clone()
 	local collected = false
 	clone.Anchored = true
+	clone.CanQuery = false
 	local randomX = (math.random() - 0.5) * spawnPart.Size.X
 	local randomZ = (math.random() - 0.5) * spawnPart.Size.Z
 	clone.CFrame = CFrame.new(spawnPart.Position + Vector3.new(randomX, 3, randomZ)) * CFrame.Angles(math.rad(90), 0, 0)
