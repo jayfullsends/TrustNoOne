@@ -48,6 +48,7 @@ local openSpectateButton = spectateButton:WaitForChild("OpenSpectateButton") :: 
 local InventoryUIController
 local SpectateUIController
 local SettingsUIController
+local NotifyController
 
 local MainUIController = {}
 
@@ -63,6 +64,7 @@ function MainUIController:Init()
 	InventoryUIController = Framework:GetServices("InventoryUIController")
 	SpectateUIController = Framework:GetServices("SpectateUIController")
 	SettingsUIController = Framework:GetServices("SettingsUIController")
+	NotifyController = Framework:GetServices("NotifyController")
 end
 
 function MainUIController:Start()

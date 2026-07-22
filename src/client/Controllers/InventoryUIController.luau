@@ -4,7 +4,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ItemConfig = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("ItemConfig"))
 local RarityConfig = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("RarityConfig"))
 
+local Framework = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Framework"))
 local RemoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
+
+local NotifyController
 
 local player = Players.LocalPlayer
 local PlayerGui = player.PlayerGui
@@ -101,6 +104,14 @@ local function populate(category, scrollFrame)
 		local clone = TEMPLATES.ItemTemplate:Clone() :: ImageButton
 		clone.ItemImageBackground.Item.Image = ItemConfig[key].ImageId
 		clone:WaitForChild("ItemName").Text = key
+		local count = value.Count or 0
+
+		if count > 1 then
+			clone.ItemCount.Text = "x" .. count
+		else
+			clone.ItemCount.Text = ""
+		end
+
 		clone.ItemRarity.Text = ItemConfig[key].Rarity
 		clone.ItemRarity.TextColor3 = RarityConfig[ItemConfig[key].Rarity].Color
 		clone.ItemAcquired.Text = os.date("%m/%d/%Y", value.Acquired)
@@ -164,7 +175,7 @@ function InventoryController:OpenOrClose()
 end
 
 function InventoryController:Init()
-	return
+	NotifyController = Framework:GetServices("NotifyController")
 end
 
 function InventoryController:Start()
@@ -173,6 +184,7 @@ function InventoryController:Start()
 	end)
 
 	if not success or not result then
+		NotifyController:Notify("Couldn't load your inventory")
 		return
 	end
 
@@ -188,6 +200,7 @@ function InventoryController:Start()
 
 	equipButton.MouseButton1Click:Connect(function()
 		if not selectedItem then
+			NotifyController:Notify("Select an item to equip")
 			return
 		end
 
@@ -195,16 +208,20 @@ function InventoryController:Start()
 		if success then
 			equippedData[selectedCategory] = selectedItem
 			equipButton.Text = "Equipped"
+		else
+			NotifyController:Notify("Couldn't equip that item")
 		end
 	end)
 
 	useDefaultButton.MouseButton1Click:Connect(function()
 		if not selectedCategory then
+			NotifyController:Notify("Select a category first")
 			return
 		end
 
 		local defaultKey = DEFAULT_ITEMS[selectedCategory]
 		if not defaultKey then
+			NotifyController:Notify("No default for this category")
 			return
 		end
 

@@ -15,12 +15,14 @@ local mainframe = gui:WaitForChild("Frame") :: Frame
 local buyButton = mainframe:WaitForChild("BuyButton") :: TextButton
 
 local LootboxUIController
+local NotifyController
 
 local TestingUIController = {}
 
 function TestingUIController:Init()
 	print("TestingUIController Init..")
 	LootboxUIController = Framework:GetServices("LootboxUIController")
+	NotifyController = Framework:GetServices("NotifyController")
 end
 
 function TestingUIController:Start()
@@ -29,7 +31,7 @@ function TestingUIController:Start()
 	buyButton.MouseButton1Click:Connect(function()
 		local result = RemoteStorage.OpenCrate:InvokeServer("ClassicCrate")
 		if not result then
-			print("Not Enough Coins..")
+			NotifyController:Notify("Not enough coins")
 			return
 		end
 

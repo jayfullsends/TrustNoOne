@@ -3,8 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 
 --// Modules
-local Framework = require(ReplicatedStorage.Modules.Framework)
-local DataService = require(script.Parent.DataService)
+local Framework = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Framework"))
 local RemoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
 
 --// Configs
