@@ -4,7 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local remoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
 
 local player = Players.LocalPlayer
-local PlayerGui = player.PlayerGui or player:WaitForChild("PlayerGui") :: PlayerGui
+local PlayerGui = player.PlayerGui :: PlayerGui
 
 local SpectateUI = PlayerGui:WaitForChild("SpectateUI") :: ScreenGui
 

@@ -6,7 +6,7 @@ local Framework = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild
 local remoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
 
 local player = Players.LocalPlayer
-local playerGui = player.PlayerGui or player:WaitForChild("PlayerGui")
+local playerGui = player.PlayerGui
 
 local gui = playerGui:WaitForChild("MainUI") :: ScreenGui
 

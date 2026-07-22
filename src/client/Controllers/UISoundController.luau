@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local player = Players.LocalPlayer
-local PlayerGui = player.PlayerGui or player:WaitForChild("PlayerGui") :: PlayerGui
+local PlayerGui = player.PlayerGui :: PlayerGui
 
 local soundsFolder = ReplicatedStorage:WaitForChild("Sounds") :: Folder
 

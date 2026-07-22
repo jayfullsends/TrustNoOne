@@ -15,7 +15,7 @@ local ItemConfig = {
 		Creator = "Creator - jayfullsends",
 		Description = "uhhh a karambit or something lol idk :P",
 		ModelName = "Karambit",
-		ImageId = "rbxassetid://133301072618931",
+		ImageId = "rbxassetid://91317064151471",
 	},
 
 	["Butterfly"] = {
@@ -24,7 +24,7 @@ local ItemConfig = {
 		Creator = "Creator - jayfullsends",
 		Description = "oh it so cool wowow",
 		ModelName = "ButterflyKnife",
-		ImageId = "rbxassetid://0",
+		ImageId = "rbxassetid://116912857871416",
 	},
 
 	["ShadowBlade"] = {

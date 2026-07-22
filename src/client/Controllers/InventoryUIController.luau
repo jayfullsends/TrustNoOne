@@ -7,7 +7,7 @@ local RarityConfig = require(ReplicatedStorage:WaitForChild("Configs"):WaitForCh
 local RemoteStorage = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("RemoteStorage"))
 
 local player = Players.LocalPlayer
-local PlayerGui = player.PlayerGui or player:WaitForChild("PlayerGui")
+local PlayerGui = player.PlayerGui
 
 --// UI Vars
 local inventoryUI = PlayerGui:WaitForChild("InventoryUI") :: ScreenGui

@@ -1,12 +1,14 @@
 local CrateConfig = {
 	ClassicCrate = {
-		Price = 500,
+		Name = "Classic Crate",
+		Price = 0,
 		Pool = {
 			Karambit = { Weight = 50 },
 			Butterfly = { Weight = 50 },
 		},
 	},
 	LegendaryCrate = {
+		Name = "Legendary Crate",
 		Price = 1500,
 		Pool = {
 			ShadowBlade = { Weight = 60 },

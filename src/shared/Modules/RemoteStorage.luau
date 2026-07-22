@@ -36,4 +36,7 @@ return {
 	--// Settings Handling
 	GetSettings = remoteFunctions:WaitForChild("GetSettings") :: RemoteFunction,
 	SetSetting = remoteEvents:WaitForChild("SetSetting") :: RemoteEvent,
+
+	--// Crate Handling
+	OpenCrate = remoteFunctions:WaitForChild("OpenCrate") :: RemoteFunction,
 }
