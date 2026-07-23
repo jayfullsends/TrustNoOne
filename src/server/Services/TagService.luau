@@ -32,22 +32,22 @@ function TagService:Init()
 end
 
 function TagService:Start()
-	print("TagService Started..")
-	local function onPlayerAdded(player: Player)
-		player.CharacterAdded:Connect(function()
-			setupTag(player)
-		end)
+	-- print("TagService Started..")
+	-- local function onPlayerAdded(player: Player)
+	-- 	player.CharacterAdded:Connect(function()
+	-- 		setupTag(player)
+	-- 	end)
 
-		if player.Character then
-			setupTag(player)
-		end
-	end
+	-- 	if player.Character then
+	-- 		setupTag(player)
+	-- 	end
+	-- end
 
-	Players.PlayerAdded:Connect(onPlayerAdded)
+	-- Players.PlayerAdded:Connect(onPlayerAdded)
 
-	for _, player in Players:GetPlayers() do
-		onPlayerAdded(player)
-	end
+	-- for _, player in Players:GetPlayers() do
+	-- 	onPlayerAdded(player)
+	-- end
 end
 
 return TagService

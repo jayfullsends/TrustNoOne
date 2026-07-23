@@ -2,6 +2,7 @@ local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
+local TouchInputService = game:GetService("TouchInputService")
 local RunService = game:GetService("RunService") :: RunService
 
 local itemConfig = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("ItemConfig"))
@@ -189,6 +190,10 @@ function CombatService:Start()
 			return
 		end
 
+		local raycastParams = RaycastParams.new()
+		raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+		raycastParams.FilterDescendantsInstances = { char }
+
 		local hrp = char:FindFirstChild("HumanoidRootPart")
 		if not hrp then
 			return
@@ -215,7 +220,9 @@ function CombatService:Start()
 
 		local parts = workspace:GetPartBoundsInRadius(hrp.Position, WEAPONS.Knife.Range)
 
-		local hit = {}
+		local closestDistance = math.huge
+		local closestTarget
+
 		for _, part: Part in parts do
 			local playerModel = part:FindFirstAncestorOfClass("Model")
 
@@ -224,38 +231,40 @@ function CombatService:Start()
 				continue
 			end
 
-			local HitPlayerHRP = playerModel:FindFirstChild("HumanoidRootPart")
-			if not HitPlayerHRP then
-				return
-			end
-
-			local raycastParams = RaycastParams.new()
-			raycastParams.FilterType = Enum.RaycastFilterType.Exclude
-			raycastParams.FilterDescendantsInstances = { char }
-
-			local raycast = workspace:Raycast(hrp.Position, (HitPlayerHRP.Position - hrp.Position), raycastParams)
-			if not raycast then
-				return
-			end
-
-			local humanoid = playerModel:FindFirstChildWhichIsA("Humanoid") :: Humanoid
-			if humanoid == player.Character:FindFirstChild("Humanoid") then
+			if playerModel == char then
 				continue
 			end
 
-			local hitPart = raycast.Instance
-			local model = hitPart:FindFirstAncestorOfClass("Model") :: Model
-			local hitPlayerRaycast = Players:GetPlayerFromCharacter(model)
-			if not hitPlayerRaycast then
-				return
+			local HitPlayerHRP = playerModel:FindFirstChild("HumanoidRootPart")
+			if not HitPlayerHRP then
+				continue
 			end
 
-			if humanoid and not hit[humanoid] then
-				hit[humanoid] = true
-				StatsService:AddKill(player)
-				GameService:PlayerKilled(hitPlayer)
+			local toTarget = HitPlayerHRP.Position - hrp.Position
+			local distance = toTarget.Magnitude
+
+			local raycast = workspace:Raycast(hrp.Position, toTarget, raycastParams)
+			if not raycast then
+				continue
+			end
+
+			local playerHit = raycast.Instance:IsDescendantOf(playerModel)
+
+			if not playerHit then
+				continue
+			end
+
+			if distance < closestDistance then
+				closestDistance = distance
+				closestTarget = Players:GetPlayerFromCharacter(playerModel)
+			end
+		end
+		if closestTarget then
+			local humanoid = closestTarget.Character:FindFirstChildWhichIsA("Humanoid")
+			if humanoid and humanoid.Health > 0 then
 				humanoid:TakeDamage(100)
-				-- knifeSound:Play()
+				GameService:PlayerKilled(closestTarget)
+				StatsService:AddKill(player)
 			end
 		end
 	end)
