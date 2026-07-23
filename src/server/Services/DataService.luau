@@ -272,8 +272,9 @@ function DataService:Start()
 
 		if not success then
 			warn("Failed to set data for: " .. player.Name .. " : " .. player.UserId)
-			return
 		end
+
+		self:Cleanup(player)
 	end)
 
 	game:BindToClose(function()
