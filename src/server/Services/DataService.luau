@@ -253,12 +253,13 @@ function DataService:Start()
 		playerData[player.UserId] = data and reconcileData(data) or copyDefaults()
 		loaded[player.UserId] = true
 
-		-- if RunService:IsStudio() then
-		-- 	self:AddItem(player, "Knives", "Karambit")
-		-- end
+		if not self:HasItem(player, "Knives", "DefaultKnife") then
+			self:AddItem(player, "Knives", "DefaultKnife")
+		end
 
-		-- self:AddItem(player, "Knives", "DefaultKnife")
-		-- self:AddItem(player, "Guns", "DefaultRevolver")
+		if not self:HasItem(player, "Guns", "DefaultRevolver") then
+			self:AddItem(player, "Guns", "DefaultRevolver")
+		end
 	end)
 
 	Players.PlayerRemoving:Connect(function(player)
