@@ -153,21 +153,23 @@ end
 function DataService:AddItem(player: Player, category, itemKey)
 	local data = playerData[player.UserId]
 	if not data then
-		return
+		return false
 	end
 
 	local itemTable = data.Inventory[category]
 	if not itemTable then
 		warn("Inventory category not found: " .. tostring(category))
-		return
+		return false
 	end
 
 	local entry = itemTable[itemKey]
 	if entry then
 		entry.Count = (entry.Count or 0) + 1
-		return
+		return true
 	end
 	itemTable[itemKey] = { Count = 1, Acquired = os.time(), Favorited = false, Locked = false }
+
+	return true
 end
 
 function DataService:HasItem(player: Player, category, itemKey)

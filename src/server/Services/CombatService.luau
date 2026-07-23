@@ -295,7 +295,7 @@ function CombatService:Start()
 			return
 		end
 
-		local sound = muzzle:WaitForChild("Shot") :: Sound
+		local sound = muzzle:FindFirstChild("Shot") :: Sound
 		if not sound then
 			warn("No Sound Found!")
 			return

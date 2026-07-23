@@ -61,10 +61,12 @@ function LootboxService:OpenCrate(player: Player, crateName: string)
 			return
 		end
 
-		DataService:AddCurrency(player, "Coins", -chosenCratePrice)
-		DataService:AddItem(player, info.Category, result)
+		local addItem = DataService:AddItem(player, info.Category, result)
 
-		return result
+		if addItem then
+			DataService:AddCurrency(player, "Coins", -chosenCratePrice)
+			return result
+		end
 	end
 
 	return false
