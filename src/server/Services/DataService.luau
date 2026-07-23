@@ -224,6 +224,8 @@ end
 function DataService:Cleanup(player: Player)
 	playerData[player.UserId] = nil
 	loaded[player.UserId] = nil
+
+	return true
 end
 -------------------------------------------------------//
 -------------------------------------------------------//
@@ -272,8 +274,6 @@ function DataService:Start()
 			warn("Failed to set data for: " .. player.Name .. " : " .. player.UserId)
 			return
 		end
-
-		self:Cleanup(player)
 	end)
 
 	game:BindToClose(function()

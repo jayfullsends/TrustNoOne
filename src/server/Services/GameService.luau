@@ -137,6 +137,11 @@ function GameService:Start()
 
 			--// Map Cloning Logic Here
 
+			if #PLAYERS_PLAYING < MIN_PLAYERS then
+				setState(gameStates.Waiting)
+				return
+			end
+
 			setState(gameStates.Active)
 			self:TeleportPlayers()
 
