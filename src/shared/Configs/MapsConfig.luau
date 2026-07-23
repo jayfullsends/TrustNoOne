@@ -1,9 +1,9 @@
 return {
 	Maps = {
-		House = {
-			Name = "House",
-			Image = "",
-			Creator = "",
+		Museum = {
+			Name = "Museum",
+			Image = "rbxassetid://91435335924679",
+			Creator = "By - heptals",
 		},
 	},
 }
