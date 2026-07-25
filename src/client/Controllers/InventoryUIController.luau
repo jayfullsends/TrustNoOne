@@ -267,7 +267,7 @@ function InventoryController:Start()
 	setupSectionsTab(OpenToysTab, toysContentFrame, "Toys")
 	setupSectionsTab(OpenPetsTab, petsContentFrame, "Pets")
 
-	--// Close Funfcionality
+	--// Close Functionality
 	closeUIButton.MouseButton1Click:Connect(function()
 		self:OpenOrClose()
 	end)

@@ -3,6 +3,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
 
+local isOpen = false
+
 --// Sounds
 local soundsFolder = ReplicatedStorage:WaitForChild("Sounds")
 
@@ -59,14 +61,6 @@ local hiddenUIs = {}
 
 local LootboxUIController = {}
 
-local function randomFromPool(pool)
-	local keys = {}
-	for key in pool do
-		table.insert(keys, key)
-	end
-	return keys[math.random(1, #keys)]
-end
-
 function LootboxUIController:Open(crateName: string, result: string)
 	if typeof(crateName) ~= "string" then
 		return
@@ -80,7 +74,32 @@ function LootboxUIController:Open(crateName: string, result: string)
 		return
 	end
 
+	if isOpen then
+		return
+	end
+
 	local pool = crate.Pool
+	if not pool then
+		return
+	end
+
+	local storedItems = {}
+
+	for key in pool do
+		if ItemConfig[key] then
+			table.insert(storedItems, key)
+		end
+	end
+
+	if #storedItems == 0 then
+		return
+	end
+
+	if not ItemConfig[result] then
+		return
+	end
+
+	isOpen = true
 
 	--// Clear old cards
 	for _, child in scrollingFrame:GetChildren() do
@@ -104,17 +123,15 @@ function LootboxUIController:Open(crateName: string, result: string)
 		if i == constants.WINNER_SLOT then
 			itemKey = result
 		else
-			itemKey = randomFromPool(pool)
+			itemKey = storedItems[math.random(1, #storedItems)]
 		end
 
 		local info = ItemConfig[itemKey]
-		if not info then
-			continue
-		end
 
+		local rarity = (RarityConfig[info.Rarity] or RarityConfig.Default).Color
 		card.Frame.ImageLabel.Image = info.ImageId
 		card.Frame.ItemName.Text = itemKey
-		card.Frame.ItemRarityColor.BackgroundColor3 = RarityConfig[info.Rarity].Color
+		card.Frame.ItemRarityColor.BackgroundColor3 = rarity
 
 		card.Parent = scrollingFrame
 	end
@@ -149,18 +166,21 @@ function LootboxUIController:Open(crateName: string, result: string)
 
 	--// Reveal
 	local info = ItemConfig[result]
-	if info then
-		itemImage.Image = info.ImageId
-		itemName.Text = result
-		rarityType.Text = info.Rarity
-		rarityType.TextColor3 = RarityConfig[info.Rarity].Color
-	end
+
+	local rarity = (RarityConfig[info.Rarity] or RarityConfig.Default).Color
+
+	itemImage.Image = info.ImageId
+	itemName.Text = result
+	rarityType.Text = info.Rarity
+	rarityType.TextColor3 = rarity
 
 	local Claim = SOUND_DATA.Claim
 	crateScroll.Visible = false
 	crateTitle.Visible = false
 	Claim.Sound:Play()
 	itemUnlockedContents.Visible = true
+
+	isOpen = false
 end
 
 function LootboxUIController:Init()
