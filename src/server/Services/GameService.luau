@@ -220,7 +220,9 @@ function GameService:Start()
 			task.wait(1)
 
 			for _, player in ROUND_PARTICIPANTS do
-				player:LoadCharacterAsync()
+				if player.Parent then
+					player:LoadCharacterAsync()
+				end
 			end
 
 			CoinService:ClearCoins()

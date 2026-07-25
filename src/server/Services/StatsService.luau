@@ -39,10 +39,12 @@ function StatsService:AwardPlayer(player: Player, context)
 	local data = DataService:GetData(player)
 	if not data then
 		return {
-			earned = xp,
 			level = 1,
+			startLevel = 1,
+			startXP = 0,
+			startXPNeeded = DataService:xpForLevel(1),
 			currentXP = 0,
-			xpNeeded = 1000,
+			xpNeeded = DataService:xpForLevel(1),
 			kills = roundStats.Kills,
 			shots = roundStats.Shots,
 		}
