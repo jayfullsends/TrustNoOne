@@ -20,6 +20,8 @@ local RemoteStorage = require(ReplicatedStorage.Modules.RemoteStorage)
 local playerData = {}
 local loaded = {}
 
+local SAVE_INTERVAL = 60
+
 local DEFAULT_DATA = {
 	Currencies = {
 		Coins = 0,
@@ -221,6 +223,22 @@ end
 -------------------------------------------------------//
 
 --// Game Cleanup
+local function savePlayer(player: Player)
+	if not loaded[player.UserId] then
+		return false, "Not loaded."
+	end
+
+	local ok, result = pcall(function()
+		return playerDataStore:SetAsync(player.UserId, playerData[player.UserId])
+	end)
+
+	if not ok then
+		return false, result
+	end
+
+	return true
+end
+
 function DataService:Cleanup(player: Player)
 	playerData[player.UserId] = nil
 	loaded[player.UserId] = nil
@@ -263,16 +281,10 @@ function DataService:Start()
 	end)
 
 	Players.PlayerRemoving:Connect(function(player)
-		if not loaded[player.UserId] then
-			return
-		end
-
-		local success, result = pcall(function()
-			return playerDataStore:SetAsync(player.UserId, playerData[player.UserId])
-		end)
+		local success, result = savePlayer(player)
 
 		if not success then
-			warn("Failed to set data for: " .. player.Name .. " : " .. player.UserId)
+			warn("Failed saving " .. player.Name .. " on exit: " .. tostring(result))
 		end
 
 		self:Cleanup(player)
@@ -280,16 +292,10 @@ function DataService:Start()
 
 	game:BindToClose(function()
 		for _, player in Players:GetPlayers() do
-			if not loaded[player.UserId] then
-				continue
-			end
-
-			local success, result = pcall(function()
-				playerDataStore:SetAsync(player.UserId, playerData[player.UserId])
-			end)
+			local success, result = savePlayer(player)
 
 			if not success then
-				warn("Failed to save data for: " .. player.UserId .. " : " .. result)
+				warn("Failed saving " .. player.Name .. " on shutdown: " .. tostring(result))
 			end
 
 			self:Cleanup(player)
@@ -318,6 +324,18 @@ function DataService:Start()
 
 		return self:EquipItem(player, category, itemKey)
 	end
+
+	task.spawn(function()
+		while true do
+			task.wait(SAVE_INTERVAL)
+			for _, player in Players:GetPlayers() do
+				local ok, err = savePlayer(player)
+				if not ok then
+					warn("Autosave failed for " .. player.Name .. ": " .. tostring(err))
+				end
+			end
+		end
+	end)
 end
 
 return DataService

@@ -2,7 +2,6 @@ local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
-local TouchInputService = game:GetService("TouchInputService")
 local RunService = game:GetService("RunService") :: RunService
 
 local itemConfig = require(ReplicatedStorage:WaitForChild("Configs"):WaitForChild("ItemConfig"))
@@ -71,15 +70,13 @@ local function getEquippedTool(player: Player, category, folder, defaultKey)
 		return
 	end
 
-	local info = itemConfig[itemKey]
-	if not info then
+	if not itemConfig[itemKey] then
 		itemKey = defaultKey
 	end
 
-	info = itemConfig[itemKey]
-
-	if itemConfig[itemKey] == nil then
-		warn("Key name mismatch..")
+	local info = itemConfig[itemKey]
+	if not info then
+		warn("Failed to find item.")
 		return
 	end
 
