@@ -63,11 +63,11 @@ local itemInfoBackgroundInside = itemInfoBackgroundOutside:WaitForChild("ItemInf
 
 -- local itemImageViewport = itemInfoBackgroundInside:WaitForChild("ItemImageViewport") :: ViewportFrame
 local itemImageBackground = itemInfoBackgroundInside:WaitForChild("ItemImageBackground") :: ImageLabel
-local itemImage = itemImageBackground:WaitForChild("ItemImage") :: ImageLabel
+-- local itemImage = itemImageBackground:WaitForChild("ItemImage") :: ImageLabel
 
 local itemNameTab = itemInfoBackgroundInside:WaitForChild("ItemNameTab") :: ImageLabel
-local itemName = itemNameTab:WaitForChild("ItemName") :: TextLabel
-local itemRarity = itemNameTab:WaitForChild("ItemRarity") :: TextLabel
+-- local itemName = itemNameTab:WaitForChild("ItemName") :: TextLabel
+-- local itemRarity = itemNameTab:WaitForChild("ItemRarity") :: TextLabel
 
 local itemInfo = itemInfoBackgroundInside:WaitForChild("ItemInfo") :: ImageLabel
 local equipButton = itemInfo:WaitForChild("EquipButton") :: TextButton
@@ -101,8 +101,16 @@ local function populate(category, scrollFrame)
 	end
 
 	for key, value in inventoryData[category] do
+		local info = ItemConfig[key]
+		if not info then
+			warn("Inventory item not in config: " .. key)
+			continue
+		end
+
+		local rarity = (RarityConfig[info.Rarity] or RarityConfig.Default).Color
+
 		local clone = TEMPLATES.ItemTemplate:Clone() :: ImageButton
-		clone.ItemImageBackground.Item.Image = ItemConfig[key].ImageId
+		clone.ItemImageBackground.Item.Image = info.ImageId
 		clone:WaitForChild("ItemName").Text = key
 		local count = value.Count or 0
 
@@ -112,8 +120,8 @@ local function populate(category, scrollFrame)
 			clone.ItemCount.Text = ""
 		end
 
-		clone.ItemRarity.Text = ItemConfig[key].Rarity
-		clone.ItemRarity.TextColor3 = RarityConfig[ItemConfig[key].Rarity].Color
+		clone.ItemRarity.Text = info.Rarity
+		clone.ItemRarity.TextColor3 = rarity
 		clone.ItemAcquired.Text = os.date("%m/%d/%Y", value.Acquired)
 
 		clone.Parent = scrollFrame
@@ -124,12 +132,12 @@ local function populate(category, scrollFrame)
 			selectedCategory = category
 
 			itemNameTab.ItemName.Text = key
-			itemNameTab.ItemRarity.Text = ItemConfig[key].Rarity
-			itemNameTab.ItemRarity.TextColor3 = RarityConfig[ItemConfig[key].Rarity].Color
+			itemNameTab.ItemRarity.Text = info.Rarity
+			itemNameTab.ItemRarity.TextColor3 = rarity
 
-			itemDescriptionText.Text = ItemConfig[key].Description
+			itemDescriptionText.Text = info.Description
 			itemAcquiredText.Text = os.date("Acquired on : %m/%d/%Y at %I:%M %p", value.Acquired)
-			itemCreatorText.Text = ItemConfig[key].Creator
+			itemCreatorText.Text = info.Creator
 
 			if equippedData[category] == key then
 				equipButton.Text = "Equipped"
@@ -137,7 +145,7 @@ local function populate(category, scrollFrame)
 				equipButton.Text = "Equip"
 			end
 
-			itemImageBackground.ItemImage.Image = ItemConfig[key].ImageId
+			itemImageBackground.ItemImage.Image = info.ImageId
 		end)
 	end
 	counts[category] = { owned = owned, total = total }
@@ -179,11 +187,11 @@ function InventoryController:Init()
 end
 
 function InventoryController:Start()
-	local success, result = pcall(function()
+	local ok, result = pcall(function()
 		return RemoteStorage.GetInventory:InvokeServer()
 	end)
 
-	if not success or not result then
+	if not ok then
 		NotifyController:Notify("Couldn't load your inventory")
 		return
 	end
@@ -204,8 +212,16 @@ function InventoryController:Start()
 			return
 		end
 
-		local success = RemoteStorage.EquipItem:InvokeServer(selectedCategory, selectedItem)
-		if success then
+		local ok, result = pcall(function()
+			return RemoteStorage.EquipItem:InvokeServer(selectedCategory, selectedItem)
+		end)
+
+		if not ok then
+			NotifyController:Notify("Something went wrong equipping..")
+			return
+		end
+
+		if result then
 			equippedData[selectedCategory] = selectedItem
 			equipButton.Text = "Equipped"
 		else
@@ -225,8 +241,16 @@ function InventoryController:Start()
 			return
 		end
 
-		local success = RemoteStorage.EquipItem:InvokeServer(selectedCategory, defaultKey)
-		if success then
+		local ok, result = pcall(function()
+			return RemoteStorage.EquipItem:InvokeServer(selectedCategory, defaultKey)
+		end)
+
+		if not ok then
+			NotifyController:Notify("Failed to equip default item..")
+			return
+		end
+
+		if result then
 			equippedData[selectedCategory] = defaultKey
 
 			if selectedItem == equippedData[selectedCategory] then
