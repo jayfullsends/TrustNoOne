@@ -37,7 +37,7 @@ local openSettingsButton = settingsButton:WaitForChild("OpenSettingsButton") :: 
 --// Shop
 local shopButtonFrame = buttonsHolder:WaitForChild("ShopButtonFrame") :: Frame
 local shopButton = shopButtonFrame:WaitForChild("ShopButton") :: Frame
--- local openShopButton = shopButton:WaitForChild("OpenShopBsutton") :: TextButton
+local openShopButton = shopButton:WaitForChild("OpenShopButton") :: TextButton
 
 --// Spectate
 local spectateButtonFrame = buttonsHolder:WaitForChild("SpectateButtonFrame") :: Frame
@@ -45,6 +45,7 @@ local spectateButton = spectateButtonFrame:WaitForChild("SpectateButton") :: Fra
 local openSpectateButton = spectateButton:WaitForChild("OpenSpectateButton") :: TextButton
 
 -- local ShopController
+local ShopUIController
 local InventoryUIController
 local SpectateUIController
 local SettingsUIController
@@ -60,7 +61,7 @@ end
 
 function MainUIController:Init()
 	print("MainUI Controller Init..")
-	-- ShopController = Framework:GetServices("ShopUIController")
+	ShopUIController = Framework:GetServices("ShopUIController")
 	InventoryUIController = Framework:GetServices("InventoryUIController")
 	SpectateUIController = Framework:GetServices("SpectateUIController")
 	SettingsUIController = Framework:GetServices("SettingsUIController")
@@ -68,7 +69,7 @@ function MainUIController:Init()
 end
 
 function MainUIController:Start()
-	-- setupOpen(openShopButton, ShopController)
+	setupOpen(openShopButton, ShopUIController)
 	setupOpen(openInventoryButton, InventoryUIController)
 	setupOpen(openSpectateButton, SpectateUIController)
 	setupOpen(openSettingsButton, SettingsUIController)

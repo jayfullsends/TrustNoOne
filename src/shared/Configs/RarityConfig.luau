@@ -1,5 +1,5 @@
 local RarityConfig = {
-	Default = { Color = Color3.fromRGB(255, 0, 149) },
+	Default = { Color = Color3.fromRGB(255, 0, 149), Order = 0 },
 	Common = { Color = Color3.fromRGB(180, 180, 180), Order = 1 }, -- grey
 	Uncommon = { Color = Color3.fromRGB(90, 200, 90), Order = 2 }, -- green
 	Rare = { Color = Color3.fromRGB(70, 140, 255), Order = 3 }, -- blue
